@@ -1,0 +1,64 @@
+name: Publish launcher
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Validate launcher
+        run: |
+          set -euo pipefail
+          test -f index.html
+          test -f manifest.webmanifest
+          test -f sw.js
+          test -f bk-icon-180.png
+          grep -Fq 'apple-touch-icon' index.html
+          grep -Fq 'Учет Студия' index.html
+          python - <<'PY'
+          from pathlib import Path
+          import json, struct
+          icon = Path('bk-icon-180.png').read_bytes()
+          assert icon[:8] == b'\x89PNG\r\n\x1a\n'
+          assert struct.unpack('>II', icon[16:24]) == (180, 180)
+          manifest = json.loads(Path('manifest.webmanifest').read_text(encoding='utf-8'))
+          assert manifest['display'] == 'standalone'
+          assert manifest['start_url'] == './'
+          print('Launcher and BK icon validated.')
+          PY
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
