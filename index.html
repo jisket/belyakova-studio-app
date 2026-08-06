@@ -11,7 +11,6 @@
   <title>Учет Студия</title>
   <link rel="apple-touch-icon" sizes="180x180" href="./bk-icon-180.png?v=5">
   <link rel="icon" type="image/png" sizes="180x180" href="./bk-icon-180.png?v=5">
-  <link rel="manifest" href="./manifest.webmanifest?v=5">
   <style>
     :root{color-scheme:light;--bg:#f7efeb;--card:rgba(255,255,255,.88);--ink:#2d2725;--muted:#8f827c;--accent:#9c705f;--line:#d9c4bb}
     *{box-sizing:border-box}
@@ -44,8 +43,8 @@
       <h1>Учет Студия</h1>
       <p class="subtitle">Belyakova Keratin</p>
       <a class="button" id="openApp" href="https://script.google.com/macros/s/AKfycbz91y2sOL4KIfI_VEivEqfvxCXYwV_GeWB3MWt9l65oDdTcFX1M87e6R5utcqnPwyalWA/exec?app=v12">Открыть приложение</a>
-      <p class="paired">Доступ для этого iPhone сохранён. Теперь добавьте эту страницу на экран «Домой».</p>
-      <p class="hint">В Safari нажмите «Поделиться» → «На экран Домой». После установки иконка будет сразу открывать обычную быструю версию приложения.</p>
+      <p class="paired">Ссылка подготовлена. Не нажимайте кнопку — сразу добавьте эту страницу на экран «Домой».</p>
+      <p class="hint">В Safari нажмите «Поделиться» → «На экран Домой». Иконка сохранит безопасный ключ из этой ссылки и будет открывать обычную быструю версию приложения.</p>
     </section>
   </main>
 
@@ -74,7 +73,7 @@
       function readCredential(){
         var value='';
         try{value=String(localStorage.getItem(storageKey)||'')}catch(ignore){}
-        return normalize(value)||normalize(cookieValue());
+        return normalize(window.location.hash)||normalize(value)||normalize(cookieValue());
       }
       function saveCredential(value){
         var token=normalize(value);if(!token)return'';
@@ -85,9 +84,7 @@
       }
       function hashCredential(){
         var token=normalize(window.location.hash);if(!token)return'';
-        token=saveCredential(token);
-        try{history.replaceState(null,document.title,window.location.pathname+window.location.search)}catch(ignore){}
-        return token;
+        return saveCredential(token);
       }
       function appLocation(credential){return appUrl+(credential?'#'+credential:'')}
 
