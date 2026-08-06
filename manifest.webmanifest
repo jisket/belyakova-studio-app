@@ -12,7 +12,7 @@
   "theme_color": "#f7efeb",
   "icons": [
     {
-      "src": "./bk-icon-180.png?v=4",
+      "src": "./bk-icon-180.png?v=5",
       "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"
